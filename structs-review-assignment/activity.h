@@ -15,7 +15,7 @@
 # include <cstddef> // for https://en.cppreference.com/w/cpp/types/size_t
 
 class Activity {   // can also use struct Activity
-    public:        // Only if using class keyword
+public:        // Only if using class keyword
     static const size_t MAX_CHARS = 50;
 
     char name[MAX_CHARS + 1] = {0};     

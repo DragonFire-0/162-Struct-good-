@@ -15,7 +15,7 @@ void print(std::ostream &os, Activity &it) {
   
   
 void printAll(std::ostream &os, Activity arr[], size_t size) {
-    for(size_t i =0; i < size; i++) {
+    for(size_t i = 0; i < size; i++) {
         print(os, arr[i]);
     }
 }
