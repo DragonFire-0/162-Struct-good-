@@ -30,4 +30,6 @@ void print(std::ostream &os, Activity &it);
 
 void printAll(std::ostream &os, Activity arr[], size_t size);
 
+void printGuide(std::ostream &os);
+
 #endif
