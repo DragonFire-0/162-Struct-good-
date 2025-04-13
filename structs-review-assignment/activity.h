@@ -23,6 +23,7 @@ public:        // Only if using class keyword
     char level[MAX_CHARS + 1] = {0};
     int rating;    // 1 - 10
     int type;      // 0 - 4
+    int indexNum = 0;
 };
 
 

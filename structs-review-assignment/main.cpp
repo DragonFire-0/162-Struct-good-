@@ -32,40 +32,41 @@ int main() {
   while (choice != 'q'){
     choice = mainInput();
 
-    //Need to make so it adds alphabetically
     if (choice == 'a'){ //Add a new activity
       addNew(activities, activitiesSize);
     }
 
-    //I realize this will  be useless if I sort alphabetically
     else if (choice == 'b'){ //List activities by name
-      //printAll(cout, activities, activitiesSize);
-      listActivity(activities, activitiesSize);
+      printAll(cout, activities, activitiesSize);
     }
 
     else if (choice == 'c'){ //List activities for a location
+      searchLocation(activities, activitiesSize);
     }
     
-    //Done
     else if (choice == 'd'){ //List activities of a Type
       searchType(activities, activitiesSize);
     }
     
-    //Needs
     else if (choice == 'e'){ //Remove an activity
-      
+      removeAct(activities, activitiesSize);
     }
     
     else if (choice == 'f'){ //Search by activity name
       searchName(activities, activitiesSize);
     }
 
-    else if (choice != 'q'){ 
-      cout << "Invalid option!! Please try again!";
+    else if (choice != 'q'){ //Error message if entered invalid option
+      cout << "Invalid option!! Please try again!" << endl;
     }
-    
- 
   }
+
+
+  //File writing
+  ofstream fout = ofstream("Activities.txt"); 
+
+  exportToFile(fout, activities, activitiesSize);
+
   return 0;
 }
 
@@ -100,12 +101,30 @@ void loadActivities(istream &fin, Activity arr[], size_t &size) {
         next = false;
       }
     }
-
     
     // insert at position
     insert(arr, size, tempAct, pos);
 
+    //Orders the activities by name
+    orderActivity(arr, size);
   }
+}
+
+void exportToFile(ofstream &is, Activity arr[], size_t &size){
+  char const DELIMITER = ';';
+  
+  for (int i = 0; i < size; i++){
+    is << arr[i]. name << DELIMITER
+    << arr[i].location << DELIMITER
+    << arr[i].level << DELIMITER
+    << arr[i].rating << DELIMITER
+    << arr[i].type;
+    //If it is not the last activity make a new line
+    if (i < size-1){
+      is << endl;
+    }
+  }
+
 }
 
 void insert(Activity arr[], size_t &size, Activity tempAct, size_t pos) {
@@ -115,6 +134,7 @@ void insert(Activity arr[], size_t &size, Activity tempAct, size_t pos) {
   arr[pos] = tempAct;
   size++;
 }
+
 
 char mainInput(){
   char tempChoice;
@@ -132,36 +152,59 @@ char mainInput(){
 } 
 
 void addNew(Activity arr[], size_t &size){
-  
-    cout << "Enter the activity name (50 characters or less): ";
-    cin >> arr[size].name;
-    //cout << endl << endl << arr[size].name << endl << endl;
+  cout << "Enter the activity name (50 characters or less): ";
+  //Ignores newline
+  cin.ignore(1);
+  writeSpace(arr[size].name);
+  cout << "Enter the activity location (50 characters or less): ";
+  writeSpace(arr[size].location);
+  cout << "Enter the activity level: ";
+  writeSpace(arr[size].level);
+  cout << "Enter the activity rating: ";
+  cin >> arr[size].rating;
+  cout << "Enter Type number(0-Athletics, 1-Food, 2-Arts, 3-Games, and 4-Others): ";
+  cin >> arr[size].type;
     
-    cout << "Enter the activity location (50 characters or less): ";
-    cin >> arr[size].location;
+  size++;
 
-    cout << "Enter the activity level: ";
-    cin >> arr[size].level;
-    
-    cout << "Enter the activity rating: ";
-    cin >> arr[size].rating;
-    
-    cout << "Enter Type number(0-Athletics, 1-Food, 2-Arts, 3-Games, and 4-Others): ";
-    cin >> arr[size].type;
-    
-    size++;
+  //Reorders the array so that the new activity is ordered alphabetically
+  orderActivity(arr, size);
 }
 
-void listActivity(Activity arr[], size_t &size){
-  Activity temp[MAX_ACTIVITIES];
+void removeAct(Activity arr[], size_t &size){
+  int numRemove = -1;
+  printAll(cout, arr, size);
+  cout << "Pick the index to remove: ";
+  cin >> numRemove;
+  //Sets numRemove in line with the array
+  numRemove--;
+
+  for (int i = 0; i < size; i++){
+    //If t is more than low
+    if (i > numRemove){
+      //Gets rid of the lowest number
+      arr[i-1] = arr[i];
+    }
+  }
+  size--;
+}
+
+void orderActivity(Activity arr[], size_t &size){
+  //Temp activity to be minipluated so the main arr does not break
+  Activity temp[MAX_ACTIVITIES]; 
+  //Temp activity to be writen to
+  Activity temp2[MAX_ACTIVITIES];
+  //Number tracking the lowest point
   int low = 0;
+  int numRun = 0;
 
   //Copies the array into a temp array
   for (int i = size; i >= 0; i--){
     temp[i] = arr[i];
   }
 
-  printGuide(cout);
+  //printGuide(cout);
+
   //Runs through the enitre array
   for (int i = size; i > 0; i--){
     
@@ -172,15 +215,15 @@ void listActivity(Activity arr[], size_t &size){
     for (int t = 1; t < i; t++){
       
       //If the current low is higher than the checked number
-      //For checking name
+      //Low starts at 0 and t starts at 1
       if (temp[low].name[0] > temp[t].name[0]){
         //Sets the low to checked number
         low = t;
       }
     }
-
-    //Prints the lowest
-    print(cout, temp[low]);
+    
+    temp2[numRun] = temp[low];
+    numRun++;
 
     for (int t = 0; t < i; t++){
       //If t is more than low
@@ -190,22 +233,73 @@ void listActivity(Activity arr[], size_t &size){
       }
     }
   }
+
+  for (int i = 0; i <= size; i++){
+    arr[i] = temp2[i];
+  }
+  
 }
 
 void searchName(Activity arr[], size_t &size){
-  char search[arr[0].MAX_CHARS + 1] = {0};  
+  //Creates a char array that is the max characters that a name can be
+  int maxChar = arr[0].MAX_CHARS + 1;
+  char search[maxChar] = {0};
   bool found = false;
 
   cout << "Enter name to search for: ";
-  cin >> search;
+  //Ignores newline
+  cin.ignore(1);
+  writeSpace(search);
 
   printGuide(cout);
+  
+ 
+  char* pch; //Char pointer
+  
+  //Runs through for each activity
   for (int i = 0; i < size; i++){
-    if (search == arr[i].name){
-      print(cout, arr[i]);
+    //Compares the name with search
+    pch = strstr (arr[i].name, search);
+    if (pch != NULL){
+      cout << i + 1;
+      print(cout,arr[i]);
       found = true;
     }
   }
+  
+  if (found != true){
+    cout << "No match found" << endl;
+  }
+}
+
+void searchLocation(Activity arr[], size_t &size){
+  //Creates a char array that is the max characters that a name can be
+  int maxChar = arr[0].MAX_CHARS + 1;
+  char search[maxChar] = {0};
+  bool found = false;
+
+  
+  cout << "Enter name to search for: ";
+
+  cin.ignore(1);
+  writeSpace(search);
+
+  printGuide(cout);
+  
+ 
+  char* pch; //Char pointer
+  
+  //Runs through for each activity
+  for (int i = 0; i < size; i++){
+    //Compares the location with search
+    pch = strstr (arr[i].location, search);
+    if (pch != NULL){
+      cout << i+1;
+      print(cout,arr[i]);
+      found = true;
+    }
+  }
+  
   if (found != true){
     cout << "No match found" << endl;
   }
@@ -221,6 +315,7 @@ void searchType(Activity arr[], size_t &size){
   printGuide(cout);
   for (int i = 0; i < size; i++){
     if (search == arr[i].type){
+      cout << i + 1;
       print(cout, arr[i]);
       found = true;
     }
@@ -235,4 +330,16 @@ void searchType(Activity arr[], size_t &size){
       cout << "Invalid number" << endl;
     }
   }
+}
+
+void writeSpace(char arr[]){
+  char ch; 
+  int cNum = 0; //Character num
+  
+  //Writes until newline
+  while (cin.get(ch) && ch != '\n') {
+    arr[cNum] = ch;
+    cNum++;
+  }
+
 }
