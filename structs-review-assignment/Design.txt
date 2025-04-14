@@ -117,7 +117,7 @@ Enter the activity name (50 characters or less): Rowing
 Enter the activity location (50 characters or less): Oaks Amusement Park
 Enter the activity level : Tricky
 Enter the activity rating : aaa
-Invalid rating! Please enter a valid rating!
+Invalid rating! Please enter a valid ratiang!
 Enter the activity rating : 8
 Enter Type number(0-Athletics, 1-Food, 2-Arts, 3-Games, and 4-Others): 0
 Activity added!

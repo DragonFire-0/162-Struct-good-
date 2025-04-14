@@ -1,6 +1,6 @@
 Catan;Epic Gaming;Easy;4;3
 Oil Painting;Fun Studios;Tricky;6;2
 Pottery;Fun Studios;Easy;7;2
+Rowingaking;Oaks Amusement Park;Trickycated;8;0
 Snowboarding;Mt Hood Meadows;Not for Faint of heart;8;0
-Skiing;Mt Hood Meadows;Difficult;6;0
 Wine Making;Umpqua Valley;Complicated;9;1

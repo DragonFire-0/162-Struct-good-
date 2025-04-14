@@ -135,7 +135,6 @@ void insert(Activity arr[], size_t &size, Activity tempAct, size_t pos) {
   size++;
 }
 
-
 char mainInput(){
   char tempChoice;
   cout << endl << "Pick an option from below:" << endl
@@ -156,12 +155,22 @@ void addNew(Activity arr[], size_t &size){
   //Ignores newline
   cin.ignore(1);
   writeSpace(arr[size].name);
+  
   cout << "Enter the activity location (50 characters or less): ";
   writeSpace(arr[size].location);
+  
   cout << "Enter the activity level: ";
   writeSpace(arr[size].level);
+
   cout << "Enter the activity rating: ";
   cin >> arr[size].rating;
+  while (!(cin >> arr[size].rating)) {
+    cin.clear(); //clear bad input flag
+    cin.ignore(100, '\n'); //discard input
+    cout << "Invalid rating! Please enter a valid rating!" << endl
+      << "Enter the activity rating: ";
+  }
+
   cout << "Enter Type number(0-Athletics, 1-Food, 2-Arts, 3-Games, and 4-Others): ";
   cin >> arr[size].type;
     
@@ -186,6 +195,7 @@ void removeAct(Activity arr[], size_t &size){
       arr[i-1] = arr[i];
     }
   }
+  cout << "Activity Removed" << endl;
   size--;
 }
 
@@ -213,10 +223,15 @@ void orderActivity(Activity arr[], size_t &size){
     
     //Runs through the array minus howevermany spots
     for (int t = 1; t < i; t++){
-      
+      int j = 0;
+      //Runs until j is the max or the names are not equal
+      while (j < arr[0].MAX_CHARS && temp[low].name[j] == temp[t].name[j]){
+        j++;
+      }
+
       //If the current low is higher than the checked number
       //Low starts at 0 and t starts at 1
-      if (temp[low].name[0] > temp[t].name[0]){
+      if (temp[low].name[j] > temp[t].name[j]){
         //Sets the low to checked number
         low = t;
       }
