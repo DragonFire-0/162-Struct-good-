@@ -63,7 +63,7 @@ int main() {
 
 
   //File writing
-  ofstream fout = ofstream("Activities.txt"); 
+  ofstream fout = ofstream("activities.txt"); 
 
   exportToFile(fout, activities, activitiesSize);
 
